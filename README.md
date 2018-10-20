@@ -23,7 +23,10 @@ Linux learning environment for noob
 Using this environment requires `Docker` installation, refer to [https://docs.docker.com/install/](https://docs.docker.com/install/) for help, after you have installed `Docker` on your machine, you can run following command to get started
 
 ```bash
-$ docker run -it learning-env:test
+$ docker run -it goiiot/learning-env:latest
+
+# or using image at quay.io
+# docker run -it quay.io/goiiot/learning-env:latest
 ```
 
 ## Lab member
