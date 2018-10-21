@@ -4,6 +4,8 @@
 
 Linux learning environment for noob
 
+[中文](./README.CN.md)
+
 ## What's in the environment
 
 
@@ -31,4 +33,4 @@ $ docker run -it goiiot/learning-env:latest
 
 ## Lab member
 
-If you have already been a member of our lab, we provide cloud learning environment on top of our `Kubernetes` cluster, please install [`Terminus`](https://github.com/Eugeny/terminus) and contact our cluster manager for member access.
+If you have already been a member of our lab, we provide cloud learning environment on top of our `Kubernetes` cluster, please contact our cluster manager for member access.
