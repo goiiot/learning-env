@@ -8,7 +8,6 @@ Linux learning environment for noob
 
 ## What's in the environment
 
-
 - OS - Ubuntu 18.04
 - Software
     - `git`
@@ -29,6 +28,24 @@ $ docker run -it goiiot/learning-env:latest
 
 # or using image at quay.io
 # docker run -it quay.io/goiiot/learning-env:latest
+```
+
+Or, if you would like to access this environment remotely, prepare your ssh identity file and create your custom `Dockerfile` (`my.Dockerfile` for example), following commands can serve your needs
+
+```bash
+# Create your ssh identity with `ssh-keygen`
+$ ssh-keygen -f id_rsa -N "" -q -t rsa -b 4096 -C "My Identity"
+
+# Create your Dockerfile
+$ cat > my.Dockerfile <<EOF
+FROM quay.io/goiiot/learning-env:latest
+EOF
+
+# Create your learning environment image
+$ docker build -t my-learning-env:latest -f my.Dockerfile
+
+# Run your custom learning environment, and access it with your favourite ssh client
+$ docker run -d -p 22:22 my-learning-env:latest
 ```
 
 ## Lab member
