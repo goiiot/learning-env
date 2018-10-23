@@ -14,7 +14,7 @@ COPY --from=GO /usr/local/go /usr/local/go
 RUN apt-get update -qq; \
     apt-get install -y \
         build-essential vim tmux htop nodejs npm git \
-        openssh-server; \
+        openssh-server net-tools iputils-ping; \
     rm -rf /var/lib/apt/lists;
 
 COPY --chown=root:root sshd_config /etc/ssh/sshd_config
