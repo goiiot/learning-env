@@ -25,9 +25,9 @@ RUN apt-get update -qq; \
     rm -rf neovim .wget-hsts; \
     \
     ln -s /usr/local/bin/nvim /usr/local/bin/vim; \
-    nvim +PlugInstall +qall; \
+    nvim +'PlugInstall --sync' +qall &> /dev/null; \
     \
-    apt-get autoremove --purge \
+    apt-get autoremove --purge -y \
         git ninja-build gettext libtool libtool-bin autoconf \
         automake cmake g++ pkg-config unzip wget curl; \
     rm -rf /var/lib/apt/lists;
