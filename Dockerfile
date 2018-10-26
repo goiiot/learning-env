@@ -17,20 +17,20 @@ ENV NEOVIM_VERSION 0.3.1
 RUN apt-get update -qq; \
     apt-get install -y \
         git ninja-build gettext libtool libtool-bin autoconf \
-        automake cmake g++ pkg-config unzip wget; \
+        automake cmake g++ pkg-config unzip wget curl; \
     \
     git clone --depth 1 -b v${NEOVIM_VERSION} \
         https://github.com/neovim/neovim.git; \
     cd neovim; make; make install; cd ..; \
     rm -rf neovim .wget-hsts; \
     \
+    ln -s /usr/local/bin/nvim /usr/local/bin/vim; \
+    nvim +PlugInstall +qall; \
+    \
     apt-get autoremove --purge \
         git ninja-build gettext libtool libtool-bin autoconf \
-        automake cmake g++ pkg-config unzip wget; \
-    rm -rf /var/lib/apt/lists; \
-    \
-    nvim +PlugInstall +qall; \
-    ln -s /usr/local/bin/nvim /usr/local/bin/vim;
+        automake cmake g++ pkg-config unzip wget curl; \
+    rm -rf /var/lib/apt/lists;
 
 # Install essential tools
 RUN apt-get update -qq; \
