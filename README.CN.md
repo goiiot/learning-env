@@ -4,13 +4,15 @@
 
 实验室新人 Linux 学习环境
 
+[English](./README.md)
+
 ## 包含什么东西
 
 - 系统 - Ubuntu 18.04
 - 软件
     - `git`
     - `tmux`
-    - `vim`
+    - `neovim` with plugins
     - `nodejs` 和 `npm`
     - `htop`
     - `gotop`

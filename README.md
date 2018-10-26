@@ -12,7 +12,7 @@ Linux learning environment for noob
 - Software
     - `git`
     - `tmux`
-    - `vim`
+    - `neovim` with plugins
     - `nodejs` and `npm`
     - `htop`
     - `gotop`
