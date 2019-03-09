@@ -42,5 +42,5 @@ PLUGIN_LIST="shd101wyy.markdown-preview-enhanced \
     KnisterPeter.vscode-github"
 
 for p in $PLUGIN_LIST; do
-  code --install-extension $p
+  code --user-data-dir /root/.config/Code --install-extension $p
 done

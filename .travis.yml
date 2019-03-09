@@ -1,0 +1,21 @@
+sudo: true
+os:
+  - linux
+
+language: generic
+
+jobs:
+  include:
+    - stage: build images
+      if: branch = master
+      script:
+        # build images
+        - docker build -t goiiot/learning-env:code-server -f code-server.dockerfile .
+        - docker images
+        # docker login
+        - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+        # push images
+        - docker push goiiot/learning-env:code-server
+
+stages:
+  - build images
