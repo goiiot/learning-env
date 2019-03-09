@@ -45,22 +45,36 @@ ENV GOROOT /usr/local/go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=GO /usr/local/go /usr/local/go
 RUN set -e ;\
-    go get -u -v github.com/ramya-rao-a/go-outline ;\
-    go get -u -v github.com/acroca/go-symbols ;\
-    go get -u -v github.com/nsf/gocode ;\
-    go get -u -v github.com/rogpeppe/godef ;\
-    go get -u -v golang.org/x/tools/cmd/godoc ;\
-    go get -u -v github.com/zmb3/gogetdoc ;\
-    go get -u -v golang.org/x/lint/golint ;\
-    go get -u -v github.com/fatih/gomodifytags ;\
-    go get -u -v github.com/uudashr/gopkgs/cmd/gopkgs ;\
-    go get -u -v golang.org/x/tools/cmd/gorename ;\
-    go get -u -v sourcegraph.com/sqs/goreturns ;\
-    go get -u -v github.com/cweill/gotests/... ;\
-    go get -u -v golang.org/x/tools/cmd/guru ;\
-    go get -u -v github.com/josharian/impl ;\
-    go get -u -v github.com/haya14busa/goplay/cmd/goplay ;\
-    go get -u -v github.com/davidrjenni/reftools/cmd/fillstruct
+    # gocode with gomodule support
+    go get -u github.com/stamblerre/gocode ;\
+    mv /go/bin/gocode /go/bin/gocode-gomod ;\
+    \
+    # gocode without gomodule support
+    go get -u github.com/mdempsky/gocode ;\
+    \
+    go get -u github.com/uudashr/gopkgs/cmd/gopkgs ;\
+    go get -u github.com/ramya-rao-a/go-outline ;\
+    go get -u github.com/acroca/go-symbols ;\
+    go get -u golang.org/x/tools/cmd/guru ;\
+    go get -u golang.org/x/tools/cmd/gorename ;\
+    go get -u github.com/fatih/gomodifytags ;\
+    go get -u github.com/haya14busa/goplay/cmd/goplay ;\
+    go get -u github.com/josharian/impl ;\
+    go get -u github.com/tylerb/gotype-live ;\
+    go get -u github.com/rogpeppe/godef ;\
+    go get -u github.com/zmb3/gogetdoc ;\
+    go get -u golang.org/x/tools/cmd/goimports ;\
+    go get -u github.com/sqs/goreturns ;\
+    go get -u winterdrache.de/goformat/goformat ;\
+    go get -u golang.org/x/lint/golint ;\
+    go get -u github.com/cweill/gotests/... ;\
+    go get -u github.com/alecthomas/gometalinter ;\
+    go get -u honnef.co/go/tools/... ;\
+    go get -u github.com/golangci/golangci-lint/cmd/golangci-lint ;\
+    go get -u github.com/mgechev/revive ;\
+    go get -u github.com/go-delve/delve/cmd/dlv ;\
+    go get -u github.com/davidrjenni/reftools/cmd/fillstruct ;\
+    go get -u github.com/godoctor/godoctor
 
 # Install code-server and extensions
 COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
