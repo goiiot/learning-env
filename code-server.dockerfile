@@ -1,9 +1,63 @@
-# codercom/code-server is based on ubuntu18.10
+###################################################################################################
+#                                                                                                 #
+#                                                                                                 #
+#                                      Stage - code-server                                        #
+#                                                                                                 #
+#                                                                                                 #
+###################################################################################################
+
 FROM codercom/code-server:latest AS CODESRV
-# golang
+
+###################################################################################################
+#                                                                                                 #
+#                                                                                                 #
+#                                         Stage - golang                                          #
+#                                                                                                 #
+#                                                                                                 #
+###################################################################################################
+
 FROM golang:stretch as GO
-# vscode
+
+###################################################################################################
+#                                                                                                 #
+#                                                                                                 #
+#                                         Stage - vscode                                          #
+#                                                                                                 #
+#                                                                                                 #
+###################################################################################################
+
 FROM ubuntu:18.04 AS VSCODE
+WORKDIR /root
+ENV PLUGIN_LIST="shd101wyy.markdown-preview-enhanced \
+    ms-python.python \
+    alefragnani.Bookmarks \
+    eamodio.gitlens \
+    christian-kohler.npm-intellisense \
+    christian-kohler.path-intellisense \
+    quicktype.quicktype \
+    Shan.code-settings-sync \
+    wwm.better-align \
+    formulahendry.auto-close-tag \
+    formulahendry.auto-rename-tag \
+    formulahendry.code-runner \
+    HookyQR.beautify \
+    Rubymaniac.vscode-paste-and-indent \
+    konstantin.wrapSelection \
+    robertohuertasm.vscode-icons \
+    steoates.autoimport \
+    naumovs.color-highlight \
+    vincaslt.highlight-matching-tag \
+    mkloubert.vscode-remote-workspace \
+    cssho.vscode-svgviewer \
+    zhuangtongfa.Material-theme \
+    yzhang.markdown-all-in-one \
+    esbenp.prettier-vscode \
+    redhat.java \
+    truman.autocomplate-shell \
+    ms-vscode.Go \
+    itryapitsin.Scala \
+    mathiasfrohlich.Kotlin \
+    twxs.cmake"
 
 RUN apt-get update ;\
 	apt-get install -y curl ;\
@@ -11,15 +65,29 @@ RUN apt-get update ;\
 	dpkg -i vscode-amd64.deb || true ;\
 	apt-get install -y -f ;\
 	# VSCode missing deps
-	apt-get install -y libx11-xcb1 libasound2
+	apt-get install -y libx11-xcb1 libasound2 jq
 
-# install plugins to /root/.vscode/extensions
-COPY vscode-plugins.sh /install-plugins.sh
-RUN /install-plugins.sh
+RUN for p in $PLUGIN_LIST; do \
+        code --user-data-dir /root/.config/Code --install-extension $p ;\
+    done ;\
+    \
+    # download offline vsix to /root/vsix
+    mkdir -p /root/vsix ;\
+    #
+    # prepare vscode-cpptools.vsix for manaul offline installation
+    curl -o /root/vsix/vscode-cpptools.vsix -L \
+        "$(curl -sL https://api.github.com/repos/Microsoft/vscode-cpptools/releases/latest \
+            | jq -r '.assets[].browser_download_url' \
+            | grep linux.vsix)"
 
-#
-# Final Image
-#
+###################################################################################################
+#                                                                                                 #
+#                                                                                                 #
+#                                         Final Image                                             #
+#                                                                                                 #
+#                                                                                                 #
+###################################################################################################
+
 FROM ubuntu:18.04
 
 # Install essential tools and libs
@@ -79,6 +147,7 @@ RUN set -e ;\
 # Install code-server and extensions
 COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
 COPY --from=VSCODE /root/.vscode/extensions /root/.code-server/extensions
+COPY --from=VSCODE /root/vsix/ /root/vsix/
 
 EXPOSE 8443
 WORKDIR /root/project
