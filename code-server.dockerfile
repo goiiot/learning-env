@@ -4,8 +4,6 @@ FROM codercom/code-server:latest AS CODESRV
 FROM golang:stretch as GO
 # vscode
 FROM ubuntu:18.04 AS VSCODE
-RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list ;\
-    sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 RUN apt-get update ;\
 	apt-get install -y curl ;\
@@ -33,9 +31,13 @@ RUN apt-get update -qq; \
         tmux htop git curl cmake zip unzip \
         openssh-server openssl locales ; \
     locale-gen en_US.UTF-8 ;\
+    \
+    # cleanup
     rm -rf /var/lib/apt/lists;
 
 ENV LANG=en_US.UTF-8
+
+RUN sed -i -E 's/(security|archive).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
 # Install go and required plugins
 ENV GOPATH /go
@@ -65,4 +67,5 @@ COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
 COPY --from=VSCODE /root/.vscode/extensions /root/.code-server/extensions
 
 EXPOSE 8443
+WORKDIR /root/project
 ENTRYPOINT [ "/usr/local/bin/code-server" ]
