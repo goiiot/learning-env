@@ -145,6 +145,12 @@ COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
 COPY --from=VSCODE /root/.vscode/extensions /root/.code-server/extensions
 COPY --from=VSCODE /root/vsix/ /root/vsix/
 
+# fix vscode-cpptools.vsix tar header (they are zipped)
+RUN set -e ;\
+    cd /root/vsix ;\
+    unzip vscode-cpptools.vsix ;\
+    tar -cf vscode-cpptools.vsix extension extension.vsixmanifest '[Content_Types].xml'
+
 EXPOSE 8443
 WORKDIR /root/project
 ENTRYPOINT [ "/usr/local/bin/code-server" ]
