@@ -11,7 +11,7 @@ FROM codercom/code-server:latest AS CODESRV
 ###################################################################################################
 #                                                                                                 #
 #                                                                                                 #
-#                                         Stage - golang                                          #
+#                                         Stage - Golang                                          #
 #                                                                                                 #
 #                                                                                                 #
 ###################################################################################################
@@ -47,7 +47,6 @@ ENV PLUGIN_LIST="shd101wyy.markdown-preview-enhanced \
     steoates.autoimport \
     naumovs.color-highlight \
     vincaslt.highlight-matching-tag \
-    mkloubert.vscode-remote-workspace \
     cssho.vscode-svgviewer \
     zhuangtongfa.Material-theme \
     yzhang.markdown-all-in-one \
@@ -64,16 +63,14 @@ RUN apt-get update ;\
 	curl -o vscode-amd64.deb -L https://vscode-update.azurewebsites.net/latest/linux-deb-x64/stable ;\
 	dpkg -i vscode-amd64.deb || true ;\
 	apt-get install -y -f ;\
-	# VSCode missing deps
+	# vscode missing deps
 	apt-get install -y libx11-xcb1 libasound2 jq
 
 RUN for p in $PLUGIN_LIST; do \
         code --user-data-dir /root/.config/Code --install-extension $p ;\
     done ;\
-    \
     # download offline vsix to /root/vsix
     mkdir -p /root/vsix ;\
-    #
     # prepare vscode-cpptools.vsix for manaul offline installation
     curl -o /root/vsix/vscode-cpptools.vsix -L \
         "$(curl -sL https://api.github.com/repos/Microsoft/vscode-cpptools/releases/latest \
@@ -90,8 +87,9 @@ RUN for p in $PLUGIN_LIST; do \
 
 FROM ubuntu:18.04
 
-# Install essential tools and libs
-RUN apt-get update -qq; \
+RUN set -e ;\
+    # install essential tools and libs
+    apt-get update -qq; \
     apt-get install -y \
         net-tools iputils-ping wget gnupg2 xz-utils \
         build-essential nodejs npm clang \
@@ -99,7 +97,6 @@ RUN apt-get update -qq; \
         tmux htop git curl cmake zip unzip \
         openssh-server openssl locales ; \
     locale-gen en_US.UTF-8 ;\
-    \
     # cleanup
     rm -rf /var/lib/apt/lists;
 
@@ -107,42 +104,41 @@ ENV LANG=en_US.UTF-8
 
 RUN sed -i -E 's/(security|archive).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
-# Install go and required plugins
+# Install go and required cli apps
 ENV GOPATH /go
 ENV GOROOT /usr/local/go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=GO /usr/local/go /usr/local/go
 RUN set -e ;\
     # gocode with gomodule support
-    go get -u github.com/stamblerre/gocode ;\
-    mv /go/bin/gocode /go/bin/gocode-gomod ;\
-    \
+    go get -u -v github.com/stamblerre/gocode ;\
+    mv ${GOPATH}/bin/gocode ${GOPATH}/bin/gocode-gomod ;\
     # gocode without gomodule support
-    go get -u github.com/mdempsky/gocode ;\
-    \
-    go get -u github.com/uudashr/gopkgs/cmd/gopkgs ;\
-    go get -u github.com/ramya-rao-a/go-outline ;\
-    go get -u github.com/acroca/go-symbols ;\
-    go get -u golang.org/x/tools/cmd/guru ;\
-    go get -u golang.org/x/tools/cmd/gorename ;\
-    go get -u github.com/fatih/gomodifytags ;\
-    go get -u github.com/haya14busa/goplay/cmd/goplay ;\
-    go get -u github.com/josharian/impl ;\
-    go get -u github.com/tylerb/gotype-live ;\
-    go get -u github.com/rogpeppe/godef ;\
-    go get -u github.com/zmb3/gogetdoc ;\
-    go get -u golang.org/x/tools/cmd/goimports ;\
-    go get -u github.com/sqs/goreturns ;\
-    go get -u winterdrache.de/goformat/goformat ;\
-    go get -u golang.org/x/lint/golint ;\
-    go get -u github.com/cweill/gotests/... ;\
-    go get -u github.com/alecthomas/gometalinter ;\
-    go get -u honnef.co/go/tools/... ;\
-    go get -u github.com/golangci/golangci-lint/cmd/golangci-lint ;\
-    go get -u github.com/mgechev/revive ;\
-    go get -u github.com/go-delve/delve/cmd/dlv ;\
-    go get -u github.com/davidrjenni/reftools/cmd/fillstruct ;\
-    go get -u github.com/godoctor/godoctor
+    go get -u -v github.com/mdempsky/gocode ;\
+    # other cli apps used by vscode-go plugin
+    go get -u -v github.com/uudashr/gopkgs/cmd/gopkgs ;\
+    go get -u -v github.com/ramya-rao-a/go-outline ;\
+    go get -u -v github.com/acroca/go-symbols ;\
+    go get -u -v golang.org/x/tools/cmd/guru ;\
+    go get -u -v golang.org/x/tools/cmd/gorename ;\
+    go get -u -v github.com/fatih/gomodifytags ;\
+    go get -u -v github.com/haya14busa/goplay/cmd/goplay ;\
+    go get -u -v github.com/josharian/impl ;\
+    go get -u -v github.com/tylerb/gotype-live ;\
+    go get -u -v github.com/rogpeppe/godef ;\
+    go get -u -v github.com/zmb3/gogetdoc ;\
+    go get -u -v golang.org/x/tools/cmd/goimports ;\
+    go get -u -v github.com/sqs/goreturns ;\
+    go get -u -v winterdrache.de/goformat/goformat ;\
+    go get -u -v golang.org/x/lint/golint ;\
+    go get -u -v github.com/cweill/gotests/... ;\
+    go get -u -v github.com/alecthomas/gometalinter ;\
+    go get -u -v honnef.co/go/tools/... ;\
+    go get -u -v github.com/golangci/golangci-lint/cmd/golangci-lint ;\
+    go get -u -v github.com/mgechev/revive ;\
+    go get -u -v github.com/go-delve/delve/cmd/dlv ;\
+    go get -u -v github.com/davidrjenni/reftools/cmd/fillstruct ;\
+    go get -u -v github.com/godoctor/godoctor
 
 # Install code-server and extensions
 COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
