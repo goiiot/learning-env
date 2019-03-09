@@ -64,7 +64,7 @@ RUN apt-get update ;\
 	dpkg -i vscode-amd64.deb || true ;\
 	apt-get install -y -f ;\
 	# vscode missing deps
-	apt-get install -y libx11-xcb1 libasound2 jq
+	apt-get install -y libx11-xcb1 libasound2 jq unzip
 
 RUN for p in $PLUGIN_LIST; do \
         code --user-data-dir /root/.config/Code --install-extension $p ;\
@@ -75,7 +75,11 @@ RUN for p in $PLUGIN_LIST; do \
     curl -o /root/vsix/vscode-cpptools.vsix -L \
         "$(curl -sL https://api.github.com/repos/Microsoft/vscode-cpptools/releases/latest \
             | jq -r '.assets[].browser_download_url' \
-            | grep linux.vsix)"
+            | grep linux.vsix)" ;\
+    # fix tar header (actually zipped)
+    cd /root/vsix ;\
+    unzip vscode-cpptools.vsix ;\
+    tar -cf vscode-cpptools.vsix extension extension.vsixmanifest '[Content_Types].xml'
 
 ###################################################################################################
 #                                                                                                 #
@@ -144,12 +148,6 @@ RUN set -e ;\
 COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
 COPY --from=VSCODE /root/.vscode/extensions /root/.code-server/extensions
 COPY --from=VSCODE /root/vsix/ /root/vsix/
-
-# fix vscode-cpptools.vsix tar header (they are zipped)
-RUN set -e ;\
-    cd /root/vsix ;\
-    unzip vscode-cpptools.vsix ;\
-    tar -cf vscode-cpptools.vsix extension extension.vsixmanifest '[Content_Types].xml'
 
 EXPOSE 8443
 WORKDIR /root/project
