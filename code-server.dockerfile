@@ -24,12 +24,26 @@ RUN /install-plugins.sh
 #
 FROM ubuntu:18.04
 
+# Install essential tools and libs
+RUN apt-get update -qq; \
+    apt-get install -y \
+        net-tools iputils-ping wget gnupg2 xz-utils \
+        build-essential nodejs npm clang \
+        python3-pip python-pip \
+        tmux htop git curl cmake zip unzip \
+        openssh-server openssl locales ; \
+    locale-gen en_US.UTF-8 ;\
+    rm -rf /var/lib/apt/lists;
+
+ENV LANG=en_US.UTF-8
+
 # Install go and required plugins
 ENV GOPATH /go
 ENV GOROOT /usr/local/go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=GO /usr/local/go /usr/local/go
-RUN go get -u -v github.com/ramya-rao-a/go-outline ;\
+RUN set -e ;\
+    go get -u -v github.com/ramya-rao-a/go-outline ;\
     go get -u -v github.com/acroca/go-symbols ;\
     go get -u -v github.com/nsf/gocode ;\
     go get -u -v github.com/rogpeppe/godef ;\
@@ -49,19 +63,6 @@ RUN go get -u -v github.com/ramya-rao-a/go-outline ;\
 # Install code-server and extensions
 COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
 COPY --from=VSCODE /root/.vscode/extensions /root/.code-server/extensions
-
-# Install essential tools and libs
-RUN apt-get update -qq; \
-    apt-get install -y \
-        net-tools iputils-ping wget gnupg2 xz-utils \
-        build-essential nodejs npm clang \
-        python3-pip python-pip \
-        tmux htop git curl cmake zip unzip \
-        openssh-server openssl locales ; \
-    locale-gen en_US.UTF-8 ;\
-    rm -rf /var/lib/apt/lists;
-
-ENV LANG=en_US.UTF-8
 
 EXPOSE 8443
 ENTRYPOINT [ "/usr/local/bin/code-server" ]
