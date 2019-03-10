@@ -79,7 +79,8 @@ RUN for p in $PLUGIN_LIST; do \
     # fix tar header (actually zipped)
     cd /root/vsix ;\
     unzip vscode-cpptools.vsix ;\
-    tar -cf vscode-cpptools.vsix extension extension.vsixmanifest '[Content_Types].xml'
+    tar -cf vscode-cpptools.vsix extension extension.vsixmanifest '[Content_Types].xml' ;\
+    rm -rf extension extension.vsixmanifest '[Content_Types].xml'
 
 ###################################################################################################
 #                                                                                                 #
