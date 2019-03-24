@@ -30,33 +30,21 @@ FROM ubuntu:18.04 AS VSCODE
 WORKDIR /root
 ENV PLUGIN_LIST="shd101wyy.markdown-preview-enhanced \
     ms-python.python \
-    alefragnani.Bookmarks \
     eamodio.gitlens \
     christian-kohler.npm-intellisense \
     christian-kohler.path-intellisense \
-    quicktype.quicktype \
     Shan.code-settings-sync \
-    wwm.better-align \
     formulahendry.auto-close-tag \
     formulahendry.auto-rename-tag \
     formulahendry.code-runner \
     HookyQR.beautify \
-    Rubymaniac.vscode-paste-and-indent \
-    konstantin.wrapSelection \
     robertohuertasm.vscode-icons \
-    steoates.autoimport \
     naumovs.color-highlight \
     vincaslt.highlight-matching-tag \
-    cssho.vscode-svgviewer \
     zhuangtongfa.Material-theme \
     yzhang.markdown-all-in-one \
-    esbenp.prettier-vscode \
-    redhat.java \
-    truman.autocomplate-shell \
     ms-vscode.Go \
-    itryapitsin.Scala \
-    mathiasfrohlich.Kotlin \
-    twxs.cmake"
+    auchenberg.vscode-browser-preview"
 
 RUN apt-get update ;\
 	apt-get install -y curl ;\
@@ -64,7 +52,7 @@ RUN apt-get update ;\
 	dpkg -i vscode-amd64.deb || true ;\
 	apt-get install -y -f ;\
 	# vscode missing deps
-	apt-get install -y libx11-xcb1 libasound2 jq unzip
+	apt-get install -y libx11-xcb1 libasound2 jq unzip chromium-browser
 
 RUN for p in $PLUGIN_LIST; do \
         code --user-data-dir /root/.config/Code --install-extension $p ;\
@@ -100,7 +88,7 @@ RUN set -e ;\
         build-essential nodejs npm clang \
         python3-pip python-pip \
         tmux htop git curl cmake zip unzip \
-        openssh-server openssl locales ; \
+        openssh-server openssl locales chromium-browser ; \
     locale-gen en_US.UTF-8 ;\
     # cleanup
     rm -rf /var/lib/apt/lists;
