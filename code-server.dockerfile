@@ -38,7 +38,7 @@ ENV PLUGIN_LIST="shd101wyy.markdown-preview-enhanced \
     formulahendry.auto-rename-tag \
     formulahendry.code-runner \
     HookyQR.beautify \
-    robertohuertasm.vscode-icons \
+    vscode-icons-team.vscode-icons \
     naumovs.color-highlight \
     vincaslt.highlight-matching-tag \
     zhuangtongfa.Material-theme \
