@@ -135,7 +135,7 @@ RUN set -e ;\
 
 # Install code-server and extensions
 COPY --from=CODESRV /usr/local/bin/code-server /usr/local/bin/code-server
-COPY --from=VSCODE /root/.vscode/extensions /root/.code-server/extensions
+COPY --from=VSCODE /root/.vscode/extensions /root/.local/share/code-server/extensions
 COPY --from=VSCODE /root/vsix/ /root/vsix/
 
 EXPOSE 8443
